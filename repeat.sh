@@ -1,3 +1,3 @@
 while true; do
-    ./main.py -w
+    python3 main.py -w
 done
