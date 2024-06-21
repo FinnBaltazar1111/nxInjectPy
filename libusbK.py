@@ -1,0 +1,21 @@
+_B='DevicePath'
+_A='DriverID'
+from ctypes import*
+KLST_HANDLE=c_void_p
+KUSB_HANDLE=c_void_p
+INVALID_HANDLE_VALUE=-1
+class DUMMYSTRUCTNAME(Structure):_fields_=[('Offset',c_ulong),('OfsettHigh',c_ulong)]
+class DUMMYUNIONNAME(Union):_fields_=[('DUMMYSTRUCTNAME',DUMMYSTRUCTNAME),('Pointer',c_void_p)]
+class OVERLAPPED(Structure):_fields_=[('Internal',POINTER(c_ulong)),('InternalHigh',POINTER(c_ulong)),('DUMMYUNIONNAME',DUMMYUNIONNAME),('hEvent',c_void_p)]
+class KLST_DEV_COMMON_INFO(Structure):_fields_=[('Vid',c_int),('Pid',c_int),('MI',c_int),('InstanceID',c_char*256)]
+class KLST_DEV_INFO(Structure):_fields_=[('Common',KLST_DEV_COMMON_INFO),(_A,c_int),('DeviceInterfaceGUID',c_char*256),('DeviceID',c_char*256),('ClassGUID',c_char*256),('Mfg',c_char*256),('DeviceDesc',c_char*256),('Service',c_char*256),('SymbolicLink',c_char*256),(_B,c_char*256),('LUsb0FilterIndex',c_int),('Connected',c_bool),('KLST_SYNC_FLAG',c_int),('BusNumber',c_int),('DeviceAddress',c_int),('SerialNumber',c_char*256)]
+class KUSB_DRIVER_API_INFO(Structure):_fields_=[(_A,c_int),('FunctionCount',c_int)]
+class KUSB_DRIVER_API(Structure):_fields_=[('Info',KUSB_DRIVER_API_INFO),('Init',WINFUNCTYPE(c_bool,KUSB_HANDLE,POINTER(KLST_DEV_INFO))),('Free',c_void_p),('ClaimInterface',c_void_p),('ReleaseInterface',c_void_p),('SetAltInterface',c_void_p),('GetAltInterface',c_void_p),('GetDescriptor',c_void_p),('ControlTransfer',c_void_p),('SetPowerPolicy',c_void_p),('GetPowerPolicy',c_void_p),('SetConfiguration',c_void_p),('GetConfiguration',c_void_p),('ResetDevice',c_void_p),('Initialize',c_void_p),('SelectInterface',c_void_p),('GetAssociatedInterface',c_void_p),('Clone',c_void_p),('QueryInterfaceSettings',c_void_p),('QueryDeviceInformation',c_void_p),('SetCurrentAlternateSetting',c_void_p),('GetCurrentAlternateSetting',c_void_p),('QueryPipe',c_void_p),('SetPipePolicy',c_void_p),('GetPipePolicy',c_void_p),('ReadPipe',WINFUNCTYPE(c_bool,KUSB_HANDLE,c_ubyte,c_void_p,c_uint,POINTER(c_uint),POINTER(OVERLAPPED))),('WritePipe',WINFUNCTYPE(c_bool,KUSB_HANDLE,c_ubyte,POINTER(c_ubyte),c_uint,POINTER(c_uint),POINTER(OVERLAPPED))),('ResetPipe',c_void_p),('AbortPipe',c_void_p),('FlushPipe',c_void_p),('IsoReadPipe',c_void_p),('IsoWritePipe',c_void_p),('GetCurrentFrameNumber',c_void_p),('GetOverlappedResult',c_void_p),('GetProperty',c_void_p),('z_F_i_x_e_d',c_ubyte*(512-(sizeof(KUSB_DRIVER_API_INFO)-sizeof(POINTER(c_uint))*34)))]
+class Evt_t(Structure):_fields_=[('Cleanup',c_void_p)]
+class Count_t(Structure):_fields_=[('Use',c_ulong),('Ref',c_ulong)]
+class User_t(Structure):_fields_=[('Valid',c_int),('CleanupCB',c_void_p),('Context',c_void_p)]
+class KOBJ_BASE(Structure):_fields_=[('Disposing',c_ulong),('Evt',Evt_t),('Count',Count_t),('User',User_t)]
+class KDEV_HANDLE_INTERNAL(Structure):_fields_=[('Base',KOBJ_BASE),('MasterDeviceHandle',c_void_p),('MasterInterfaceHandle',c_void_p),(_B,c_char_p),('ConfigDescriptor',c_void_p),('SharedInterfaces',c_void_p),('DriverAPI',POINTER(KUSB_DRIVER_API)),('UsbStack',c_void_p),('Backend',c_void_p)]
+class Move_t(Structure):_fields_=[('End',c_int),('InterfaceEL',c_void_p),('AltInterfaceEL',c_void_p),('PipeEL',c_void_p)]
+class KUSB_HANDLE_INTERNAL(Structure):_fields_=[('Base',KOBJ_BASE),('Device',POINTER(KDEV_HANDLE_INTERNAL)),('Selected_SharedInterface_Index',c_long),('IsClone',c_int),('Move',Move_t)]
+class status_t(Structure):_fields_=[('recipient',c_uint),('index',c_uint),('status',c_uint)]
