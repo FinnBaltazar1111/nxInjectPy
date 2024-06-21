@@ -1,3 +1,3 @@
-while true;do
+while true; do
     ./main.py -w
 done
